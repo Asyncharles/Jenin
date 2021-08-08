@@ -37,8 +37,8 @@ public abstract class JeninParser {
             return false;
         }
     };
-    private final Gson gson;
     private final Logger logger = initLogger();
+    private Gson gson;
 
     public JeninParser() {
         this(JeninParser.DEFAULT_SERIALIZATION_EXCLUSION_STRATEGY, DEFAULT_DESERIALIZATION_EXCLUSION_STRATEGY);
@@ -48,13 +48,21 @@ public abstract class JeninParser {
         gson = new GsonBuilder().serializeNulls().addSerializationExclusionStrategy(serializationStrategy).addDeserializationExclusionStrategy(deserializationStrategy).create();
     }
 
-    public Gson getGson() {
+    protected void rebuildGson(GsonBuilder builder) {
+        this.gson = builder.create();
+    }
+
+    protected Gson getGson() {
         return gson;
     }
 
     public Logger getLogger() {
         return logger;
     }
+
+    public abstract JeninParser updateExclusionStrategy(ExclusionStrategy serializationExclusionStrategy, ExclusionStrategy deserializationExclusionStrategy);
+
+    public abstract JeninParser updateExclusionStrategy(ExclusionStrategy... exclusionStrategy);
 
     public abstract void compactPush(String key, String json);
 

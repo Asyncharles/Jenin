@@ -1,5 +1,7 @@
 package net.charles;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.GsonBuilder;
 import net.charles.json.JeninParser;
 import net.charles.json.KeyManager;
 import redis.clients.jedis.Jedis;
@@ -10,6 +12,18 @@ public class Jenin extends JeninParser {
 
     public Jenin(final JedisPool jedisPool) {
         this.pool = jedisPool;
+    }
+
+    @Override
+    public JeninParser updateExclusionStrategy(ExclusionStrategy serializationExclusionStrategy, ExclusionStrategy deserializationExclusionStrategy) {
+        rebuildGson(new GsonBuilder().addSerializationExclusionStrategy(serializationExclusionStrategy).addDeserializationExclusionStrategy(deserializationExclusionStrategy));
+        return this;
+    }
+
+    @Override
+    public JeninParser updateExclusionStrategy(ExclusionStrategy... exclusionStrategy) {
+        rebuildGson(new GsonBuilder().setExclusionStrategies(exclusionStrategy));
+        return this;
     }
 
     @Override
