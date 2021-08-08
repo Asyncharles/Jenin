@@ -6,6 +6,11 @@ import net.charles.exceptions.DataKeyNotFoundException;
 import java.lang.reflect.Field;
 
 public final class KeyManager {
+    /**
+     * Defines if the class has a {@link DataKey}
+     * @param clazz the class
+     * @return {@code true} if the class has a {@link DataKey}, {@code false} otherwise
+     */
     public static boolean hasDataKey(Class<?> clazz) {
         boolean valid = false;
         for (Field field : clazz.getDeclaredFields()) {
@@ -17,6 +22,13 @@ public final class KeyManager {
         return valid;
     }
 
+    /**
+     * Finds and returns the {@link DataKey} field value
+     * @param t the object instance
+     * @param <T> the object type
+     * @return the field value
+     * @throws IllegalAccessException
+     */
     public static <T> String findKey(T t) throws IllegalAccessException {
         if (!hasDataKey(t.getClass())) {
             throw new DataKeyNotFoundException("no data key were found");
