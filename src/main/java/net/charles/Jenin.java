@@ -2,10 +2,12 @@ package net.charles;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.GsonBuilder;
-import net.charles.json.JeninParser;
-import net.charles.json.KeyManager;
+import net.charles.parser.JeninParser;
+import net.charles.parser.KeyManager;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import java.util.Map;
 
 public class Jenin extends JeninParser {
     private final JedisPool pool;
@@ -38,6 +40,21 @@ public class Jenin extends JeninParser {
         try (Jedis jedis = pool.getResource()) {
             String key = KeyManager.findKey(t);
             jedis.set(key, getGson().toJson(t, t.getClass()));
+        }
+    }
+
+    @Override
+    public <T> void push(T t) throws IllegalAccessException {
+        try (Jedis jedis = pool.getResource()) {
+            String key = KeyManager.findKey(t);
+            jedis.hset(key, convert(t));
+        }
+    }
+
+    @Override
+    public void push(String key, Map<String, String> obj) {
+        try (Jedis jedis = pool.getResource()) {
+            jedis.hset(key, obj);
         }
     }
 }

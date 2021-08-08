@@ -1,4 +1,4 @@
-package net.charles.json;
+package net.charles.parser;
 
 import net.charles.annotations.DataKey;
 import net.charles.exceptions.DataKeyNotFoundException;

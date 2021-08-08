@@ -1,4 +1,4 @@
-package net.charles.json;
+package net.charles.parser;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -8,8 +8,11 @@ import net.charles.annotations.DataKey;
 import net.charles.annotations.Exclude;
 import net.charles.logger.LoggerProvider;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.*;
 
 public abstract class JeninParser {
@@ -52,6 +55,20 @@ public abstract class JeninParser {
         this.gson = builder.create();
     }
 
+    protected <T> Map<String, String> convert(T obj) throws IllegalAccessException {
+        final Map<String, String> map = new HashMap<>();
+        for (Field field : obj.getClass().getDeclaredFields()) {
+            if (field.getAnnotation(DataKey.class) != null && !field.getAnnotation(DataKey.class).include() || field.getAnnotation(Exclude.class) != null) continue;
+            field.setAccessible(true);
+            if (field.getType().isPrimitive() || field.getType().equals(String.class)) {
+                map.put(field.getName(), String.valueOf(field.get(obj)));
+            } else {
+                map.put(field.getName(), gson.toJson(field.get(obj)));
+            }
+        }
+        return map;
+    }
+
     protected Gson getGson() {
         return gson;
     }
@@ -66,7 +83,11 @@ public abstract class JeninParser {
 
     public abstract void compactPush(String key, String json);
 
-    public abstract <T> void compactPush(T t) throws IllegalAccessException, InstantiationException;
+    public abstract <T> void compactPush(T t) throws IllegalAccessException;
+
+    public abstract <T> void push(T t) throws IllegalAccessException;
+
+    public abstract void push(String key, Map<String, String> obj);
 
     private Logger initLogger() {
         LoggerProvider.setProvider(s -> {
