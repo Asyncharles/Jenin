@@ -16,13 +16,13 @@ public class Jenin extends JeninParser {
 
     @Override
     public JeninParser updateExclusionStrategy(ExclusionStrategy serializationExclusionStrategy, ExclusionStrategy deserializationExclusionStrategy) {
-        rebuildGson(new GsonBuilder().addSerializationExclusionStrategy(serializationExclusionStrategy).addDeserializationExclusionStrategy(deserializationExclusionStrategy));
+        rebuildGson(new GsonBuilder().serializeNulls().addSerializationExclusionStrategy(serializationExclusionStrategy).addDeserializationExclusionStrategy(deserializationExclusionStrategy));
         return this;
     }
 
     @Override
     public JeninParser updateExclusionStrategy(ExclusionStrategy... exclusionStrategy) {
-        rebuildGson(new GsonBuilder().setExclusionStrategies(exclusionStrategy));
+        rebuildGson(new GsonBuilder().serializeNulls().setExclusionStrategies(exclusionStrategy));
         return this;
     }
 
