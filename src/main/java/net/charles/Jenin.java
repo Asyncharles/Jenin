@@ -47,7 +47,7 @@ public class Jenin extends JeninParser {
     public <T> void push(T t) throws IllegalAccessException {
         try (Jedis jedis = pool.getResource()) {
             String key = KeyManager.findKey(t);
-            jedis.hset(key, convert(t));
+            jedis.hset(key, convertToHashSet(t));
         }
     }
 
@@ -56,6 +56,28 @@ public class Jenin extends JeninParser {
         try (Jedis jedis = pool.getResource()) {
             jedis.hset(key, obj);
         }
+    }
+
+    @Override
+    public <T> T compactSearch(String key, Class<T> clazz) {
+        try (Jedis jedis = pool.getResource()) {
+            return convertToObject(jedis.hgetAll(key), clazz);
+        }
+    }
+
+    @Override
+    public <T> T compactSearch(String key, String fieldName) {
+        return null;
+    }
+
+    @Override
+    public <T> T search(String key) {
+        return null;
+    }
+
+    @Override
+    public <T, V> T[] search(String fieldName, V fieldValue) {
+        return null;
     }
 }
 
