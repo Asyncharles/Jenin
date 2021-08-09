@@ -2,6 +2,7 @@ package net.charles;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
 import net.charles.parser.JeninParser;
 import net.charles.parser.KeyManager;
 import redis.clients.jedis.Jedis;
@@ -61,18 +62,23 @@ public class Jenin extends JeninParser {
     @Override
     public <T> T compactSearch(String key, Class<T> clazz) {
         try (Jedis jedis = pool.getResource()) {
-            return convertToObject(jedis.hgetAll(key), clazz);
+            return getGson().fromJson(jedis.get(key), clazz);
         }
     }
 
     @Override
-    public <T> T compactSearch(String key, String fieldName) {
-        return null;
+    public String compactSearch(String key, String fieldName, Class<?> clazz) {
+        try (Jedis jedis = pool.getResource()) {
+            Object obj = getGson().fromJson(jedis.get(key), clazz);
+            return getGson().toJsonTree(obj).getAsJsonObject().get(fieldName).getAsString();
+        }
     }
 
     @Override
-    public <T> T search(String key) {
-        return null;
+    public <T> T search(String key, Class<T> clazz) {
+        try (Jedis jedis = pool.getResource()) {
+            return convertToObject(jedis.hgetAll(key), clazz);
+        }
     }
 
     @Override

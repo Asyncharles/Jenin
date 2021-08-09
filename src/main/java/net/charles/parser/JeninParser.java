@@ -194,10 +194,10 @@ public abstract class JeninParser {
      * </p>
      * @param key the key to access the redis string
      * @param fieldName the json field name to access the value
-     * @param <T> the value type
-     * @return the value
+     * @param clazz the class of the object
+     * @return the value formatted into a string
      */
-    public abstract <T> T compactSearch(String key, String fieldName);
+    public abstract String compactSearch(String key, String fieldName, Class<?> clazz);
 
     /**
      * <p>
@@ -212,7 +212,7 @@ public abstract class JeninParser {
      * @param <T> the object type
      * @return the object
      */
-    public abstract <T> T search(String key);
+    public abstract <T> T search(String key, Class<T> clazz);
 
     /**
      * <p>
