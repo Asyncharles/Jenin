@@ -7,7 +7,6 @@ public class Player {
     private String name;
     public int age;
     public boolean dev;
-    @Exclude
     private Skill skill;
 
     public Player(String name, int age, boolean dev, Skill skill) {
