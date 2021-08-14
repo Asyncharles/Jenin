@@ -1,6 +1,6 @@
 ## Jenin
 
-Redis JSON and Object parser for Java using GSON and Jedis.
+Redis JSON and Object parser for Java using Gson and Jedis.
 
 Still under heavy development / no official release for now.
 
