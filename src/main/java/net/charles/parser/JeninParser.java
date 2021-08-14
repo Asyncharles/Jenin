@@ -109,6 +109,14 @@ public abstract class JeninParser {
         return (T) getGson().fromJson(jsonObject, clazz);
     }
 
+    /**
+     * Filters the object with the designed {@link SearchFilter}
+     * @param instance the instance of the object
+     * @param filters the array {@link SearchFilter}
+     * @return {@code true} if the object respects the {@link SearchFilter}, {@code false} otherwise
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     protected boolean applyFilter(Object instance, SearchFilter<?>[] filters) throws NoSuchFieldException, IllegalAccessException {
         for (SearchFilter<?> filter : filters) {
             Field field = instance.getClass().getDeclaredField(filter.getFieldName());
