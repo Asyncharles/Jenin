@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.*;
 
@@ -106,6 +107,15 @@ public abstract class JeninParser {
             jsonObject.addProperty(entry.getKey(), entry.getValue());
         }
         return (T) getGson().fromJson(jsonObject, clazz);
+    }
+
+    protected boolean applyFilter(Object instance, SearchFilter<?>[] filters) throws NoSuchFieldException, IllegalAccessException {
+        for (SearchFilter<?> filter : filters) {
+            Field field = instance.getClass().getDeclaredField(filter.getFieldName());
+            field.setAccessible(true);
+            if (!filter.getFieldValue().equals(field.get(instance))) return false;
+        }
+        return true;
     }
 
     /**
@@ -220,14 +230,15 @@ public abstract class JeninParser {
      *     Does not look up redis strings, only hash sets
      *     ==============================================
      *
-     *     Returns an array of object that has an equal value in the selected field
+     *     Returns a list of object that has an equal value in the selected field
      * </p>
      * @param searchFilters {@link SearchFilter}
+     * @param clazz the class of the object
      * @param <V> the field value type
      * @param <C> the object type
-     * @return an array of object
+     * @return a list of object
      */
-    public abstract <V, C> C[] hashSearch(SearchFilter<V, C>[] searchFilters);
+    public abstract <V, C> List<C> hashSearch(SearchFilter<V>[] searchFilters, Class<C> clazz) throws NoSuchFieldException, IllegalAccessException;
 
     /**
      * Configures the Parser's logger

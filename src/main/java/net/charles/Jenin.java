@@ -8,6 +8,8 @@ import net.charles.parser.SearchFilter;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Jenin extends JeninParser {
@@ -82,12 +84,14 @@ public class Jenin extends JeninParser {
     }
 
     @Override
-    public <V, C> C[] hashSearch(SearchFilter<V, C>[] searchFilters) {
+    public <V, C> List<C> hashSearch(SearchFilter<V>[] searchFilters, Class<C> clazz) throws NoSuchFieldException, IllegalAccessException {
         try (Jedis jedis = pool.getResource()) {
+            final List<C> objects = new ArrayList<>();
             for (String v : jedis.scan("0").getResult()) {
-
+                C c = (C) getGson().fromJson(v, clazz);
+                if (applyFilter(c, searchFilters)) objects.add(c);
             }
-            return null;
+            return objects;
         }
     }
 }

@@ -1,14 +1,12 @@
 package net.charles.parser;
 
-public class SearchFilter<V, C> {
+public class SearchFilter<V> {
     private final String fieldName;
     private final V fieldValue;
-    private final Class<C> aClass;
 
-    public SearchFilter(String fieldName, V fieldValue, Class<C> aClass) {
+    public SearchFilter(String fieldName, V fieldValue) {
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;
-        this.aClass = aClass;
     }
 
     public String getFieldName() {
@@ -17,9 +15,5 @@ public class SearchFilter<V, C> {
 
     public V getFieldValue() {
         return fieldValue;
-    }
-
-    public Class<C> getType() {
-        return aClass;
     }
 }
