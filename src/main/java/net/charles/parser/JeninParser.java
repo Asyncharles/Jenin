@@ -144,18 +144,10 @@ public abstract class JeninParser {
      * @param key the key to access the string
      * @param json the json string
      */
-    public abstract void compactPush(String key, String json);
+    public abstract void push(String key, String json);
 
     /**
      * Converts the object into a json string and stores as a redis string
-     * @param t the object
-     * @param <T> the object type
-     * @throws IllegalAccessException
-     */
-    public abstract <T> void compactPush(T t) throws IllegalAccessException;
-
-    /**
-     * Stores the object as a redis hash set
      * @param t the object
      * @param <T> the object type
      * @throws IllegalAccessException
@@ -164,10 +156,18 @@ public abstract class JeninParser {
 
     /**
      * Stores the object as a redis hash set
+     * @param t the object
+     * @param <T> the object type
+     * @throws IllegalAccessException
+     */
+    public abstract <T> void pushToHashSet(T t) throws IllegalAccessException;
+
+    /**
+     * Stores the object as a redis hash set
      * @param key the key to access the hash set
      * @param obj the object
      */
-    public abstract void push(String key, Map<String, String> obj);
+    public abstract void pushToHashSet(String key, Map<String, String> obj);
 
     /**
      * <p>
@@ -182,7 +182,7 @@ public abstract class JeninParser {
      * @param <T> the object type
      * @return the object
      */
-    public abstract <T> T compactSearch(String key, Class<T> clazz);
+    public abstract <T> T search(String key, Class<T> clazz);
 
     /**
      * <p>
@@ -197,7 +197,7 @@ public abstract class JeninParser {
      * @param clazz the class of the object
      * @return the value formatted into a string
      */
-    public abstract String compactSearch(String key, String fieldName, Class<?> clazz);
+    public abstract String search(String key, String fieldName, Class<?> clazz);
 
     /**
      * <p>
@@ -212,7 +212,7 @@ public abstract class JeninParser {
      * @param <T> the object type
      * @return the object
      */
-    public abstract <T> T search(String key, Class<T> clazz);
+    public abstract <T> T hashSearch(String key, Class<T> clazz);
 
     /**
      * <p>
@@ -222,13 +222,12 @@ public abstract class JeninParser {
      *
      *     Returns an array of object that has an equal value in the selected field
      * </p>
-     * @param fieldName the selected field
-     * @param fieldValue the value of the field
-     * @param <T> the objects type
-     * @param <V> the value type
-     * @return an array of objects
+     * @param searchFilters {@link SearchFilter}
+     * @param <V> the field value type
+     * @param <C> the object type
+     * @return an array of object
      */
-    public abstract <T, V> T[] search(String fieldName, V fieldValue);
+    public abstract <V, C> C[] hashSearch(SearchFilter<V, C>[] searchFilters);
 
     /**
      * Configures the Parser's logger
