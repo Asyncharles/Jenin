@@ -10,6 +10,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.exceptions.JedisDataException;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,14 +24,20 @@ public class Jenin extends JeninParser {
 
     @Override
     public JeninParser updateExclusionStrategy(ExclusionStrategy serializationExclusionStrategy, ExclusionStrategy deserializationExclusionStrategy) {
-        rebuildGson(new GsonBuilder().serializeNulls().addSerializationExclusionStrategy(serializationExclusionStrategy).addDeserializationExclusionStrategy(deserializationExclusionStrategy));
+        rebuildGson(getGson().newBuilder().serializeNulls().addSerializationExclusionStrategy(serializationExclusionStrategy).addDeserializationExclusionStrategy(deserializationExclusionStrategy));
         return this;
     }
 
     @Override
     public JeninParser updateExclusionStrategy(ExclusionStrategy... exclusionStrategy) {
-        rebuildGson(new GsonBuilder().serializeNulls().setExclusionStrategies(exclusionStrategy));
+        rebuildGson(getGson().newBuilder().serializeNulls().setExclusionStrategies(exclusionStrategy));
         return this;
+    }
+
+    @Override
+    public JeninParser registerTypeAdapter(Type type, Object adapter) {
+        rebuildGson(getGson().newBuilder().registerTypeAdapter(type, adapter));
+        return null;
     }
 
     @Override

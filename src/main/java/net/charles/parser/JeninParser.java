@@ -5,9 +5,9 @@ import net.charles.annotations.DataKey;
 import net.charles.annotations.Exclude;
 import net.charles.logger.LoggerProvider;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.*;
@@ -174,6 +174,14 @@ public abstract class JeninParser {
      * @return {@link JeninParser}
      */
     public abstract JeninParser updateExclusionStrategy(ExclusionStrategy... exclusionStrategy);
+
+    /**
+     * Updates the {@link Gson} with new type adapters
+     * @param type object type
+     * @param adapter the object adapter
+     * @return {@link JeninParser}
+     */
+    public abstract JeninParser registerTypeAdapter(Type type, Object adapter);
 
     /**
      * Pushes the json string as a redis string
