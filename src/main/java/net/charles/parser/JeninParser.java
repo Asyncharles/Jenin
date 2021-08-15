@@ -251,6 +251,21 @@ public abstract class JeninParser {
      *     Does not look up redis strings, only hash sets
      *     ==============================================
      *
+     *     Searches a hash set and converts it into an object
+     * </p>
+     *
+     * @param key the key to access the hash set
+     * @param fieldName the name of the field that contains the value
+     * @return the field value
+     */
+    public abstract String hashSearch(String key, String fieldName);
+
+    /**
+     * <p>
+     *     ==============================================
+     *     Does not look up redis strings, only hash sets
+     *     ==============================================
+     *
      *     Returns a list of object that has an equal value in the selected field
      * </p>
      * @param searchFilters {@link SearchFilter}
