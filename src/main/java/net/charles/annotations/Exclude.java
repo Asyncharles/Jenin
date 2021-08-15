@@ -13,5 +13,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD})
 public @interface Exclude {
+    /**
+     *
+     * @return {@code true} if you wish to serialize the type or field as a null value, {@code false} if you wish to remove the type or the field from the serialization
+     */
     boolean serializeAsNull() default true;
 }
