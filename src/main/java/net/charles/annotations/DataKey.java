@@ -18,5 +18,5 @@ public @interface DataKey {
      *
      * @return {@code true} if you wish for the field to be included in the serialized object, {@code false} otherwise
      */
-    boolean include();
+    boolean include() default true;
 }
