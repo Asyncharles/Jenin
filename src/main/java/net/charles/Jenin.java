@@ -7,6 +7,8 @@ import net.charles.parser.KeyManager;
 import net.charles.parser.SearchFilter;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.exceptions.JedisDataException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,15 +86,25 @@ public class Jenin extends JeninParser {
     }
 
     @Override
+    public String hashSearch(String key, String fieldName) {
+        try (Jedis jedis = pool.getResource()) {
+            return jedis.hget(key, fieldName);
+        }
+    }
+
+    @Override
     public <V, C> List<C> hashSearch(SearchFilter<V>[] searchFilters, Class<C> clazz) throws NoSuchFieldException, IllegalAccessException {
         try (Jedis jedis = pool.getResource()) {
             final List<C> objects = new ArrayList<>();
-            for (String v : jedis.scan("0").getResult()) {
-                C c = (C) getGson().fromJson(v, clazz);
-                if (applyFilter(c, searchFilters)) objects.add(c);
+            for (String v : jedis.scan("0", new ScanParams().match("*")).getResult()) {
+                try {
+                    if (jedis.hexists(v, searchFilters[0].getFieldName())) {
+                        C c = convertToObject(jedis.hgetAll(v), clazz);
+                        if (applyFilter(c, searchFilters)) objects.add(c);
+                    }
+                } catch (JedisDataException ignored) { }
             }
             return objects;
         }
     }
 }
-
