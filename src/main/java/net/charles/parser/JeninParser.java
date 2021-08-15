@@ -5,13 +5,13 @@ import net.charles.annotations.DataKey;
 import net.charles.annotations.Exclude;
 import net.charles.logger.LoggerProvider;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.*;
+import java.util.logging.Formatter;
 
 public abstract class JeninParser {
     /**
@@ -25,13 +25,12 @@ public abstract class JeninParser {
     public final static ExclusionStrategy DEFAULT_SERIALIZATION_EXCLUSION_STRATEGY = new ExclusionStrategy() {
         @Override
         public boolean shouldSkipField(FieldAttributes fieldAttributes) {
-            DataKey key = fieldAttributes.getAnnotation(DataKey.class);
-            return key != null && !key.include() || fieldAttributes.getAnnotation(Exclude.class) != null;
+            return fieldAttributes.hasModifier(Modifier.TRANSIENT);
         }
 
         @Override
         public boolean shouldSkipClass(Class<?> aClass) {
-            return aClass.getAnnotation(Exclude.class) != null;
+            return false;
         }
     };
 
@@ -83,7 +82,21 @@ public abstract class JeninParser {
     protected <T> Map<String, String> convertToHashSet(T obj) throws IllegalAccessException {
         final Map<String, String> map = new HashMap<>();
         for (Field field : obj.getClass().getDeclaredFields()) {
-            if (field.getAnnotation(DataKey.class) != null && !field.getAnnotation(DataKey.class).include() || field.getAnnotation(Exclude.class) != null) continue;
+            if (field.getAnnotations().length != 0) {
+                if (field.getAnnotation(DataKey.class) != null) {
+                    if (!field.getAnnotation(DataKey.class).include()) {
+                        map.put("key-property", "false");
+                    } else {
+                        map.put("key-property", "true");
+                    }
+                    continue;
+                } else if (field.getAnnotation(Exclude.class) != null) {
+                    if (field.getAnnotation(Exclude.class).serializeAsNull()) {
+                        map.put(field.getName(), "null");
+                    }
+                    continue;
+                }
+            }
             field.setAccessible(true);
             if (field.getType().isPrimitive() || field.getType().equals(String.class)) {
                 map.put(field.getName(), String.valueOf(field.get(obj)));
