@@ -81,7 +81,7 @@ public class Jenin extends JeninParser {
     @Override
     public <T> T hashSearch(String key, Class<T> clazz) {
         try (Jedis jedis = pool.getResource()) {
-            return convertToObject(jedis.hgetAll(key), clazz);
+            return convertToObject(key, jedis.hgetAll(key), clazz);
         }
     }
 
@@ -99,7 +99,7 @@ public class Jenin extends JeninParser {
             for (String v : jedis.scan("0", new ScanParams().match("*")).getResult()) {
                 try {
                     if (jedis.hexists(v, searchFilters[0].getFieldName())) {
-                        C c = convertToObject(jedis.hgetAll(v), clazz);
+                        C c = convertToObject(v, jedis.hgetAll(v), clazz);
                         if (applyFilter(c, searchFilters)) objects.add(c);
                     }
                 } catch (JedisDataException ignored) { }

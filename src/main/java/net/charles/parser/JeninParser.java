@@ -85,7 +85,7 @@ public abstract class JeninParser {
             if (field.getAnnotations().length != 0) {
                 if (field.getAnnotation(DataKey.class) != null) {
                     if (!field.getAnnotation(DataKey.class).include()) {
-                        map.put("key-property", "false");
+                        map.put("key-property:" + field.getName(), "false");
                     } else {
                         map.put("key-property", "true");
                     }
@@ -109,15 +109,20 @@ public abstract class JeninParser {
 
     /**
      * Converts the hashset object from redis into an object
+     * @param keyedValue the key used to access the data in redis
      * @param map the redis hashset containing the hashed object
      * @param clazz the object class
      * @param <T> the object type
      * @return the object
      */
-    protected <T> T convertToObject(Map<String, String> map, Class<T> clazz) {
+    protected <T> T convertToObject(String keyedValue, Map<String, String> map, Class<T> clazz) {
         JsonObject jsonObject = new JsonObject();
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            jsonObject.addProperty(entry.getKey(), entry.getValue());
+            if (entry.getKey().contains("key-property") && entry.getValue().equals("false")) {
+                jsonObject.addProperty(entry.getKey().split(":")[1], keyedValue);
+            } else {
+                jsonObject.addProperty(entry.getKey(), entry.getValue());
+            }
         }
         return (T) getGson().fromJson(jsonObject, clazz);
     }
