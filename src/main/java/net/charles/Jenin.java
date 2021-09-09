@@ -37,7 +37,7 @@ public class Jenin extends JeninParser {
     @Override
     public JeninParser registerTypeAdapter(Type type, Object adapter) {
         rebuildGson(getGson().newBuilder().registerTypeAdapter(type, adapter));
-        return null;
+        return this;
     }
 
     @Override
