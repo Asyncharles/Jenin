@@ -1,7 +1,7 @@
 package net.charles.parser;
 
 import net.charles.annotations.DataKey;
-import net.charles.exceptions.DataKeyNotFoundException;
+import net.charles.exceptions.parser.DataKeyNotFoundException;
 
 import java.lang.reflect.Field;
 
