@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 public class StringAdapter<T> extends TypeAdapter<T> {
-
     @Override
     public void write(JsonWriter jsonWriter, T t) throws IOException {
         for (Field field : t.getClass().getDeclaredFields()) {
