@@ -1,9 +1,9 @@
-package net.charles.exceptions;
+package net.charles.exceptions.messaging;
 
-public class ParserException extends RuntimeException {
+public class MessagingException extends NullPointerException {
     private String message;
 
-    public ParserException(String message) {
+    public MessagingException(String message) {
         this.message = message;
     }
 
