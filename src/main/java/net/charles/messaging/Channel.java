@@ -7,14 +7,16 @@ public class Channel<O> {
     private final String name;
 
     /**
-     * The object class in which the messages will be parsed
-     */
-    private final Class<O> objClass;
-
-    /**
      * The {@link MessageReceiver}
      */
     private MessageReceiver<O> receiver;
+
+    private final SubscriptionHandler subscriptionHandler;
+
+    /**
+     * The object class in which the messages will be parsed
+     */
+    private final Class<O> objClass;
 
     /**
      *
@@ -26,7 +28,7 @@ public class Channel<O> {
     public Channel(String name, MessageReceiver<O> receiver, SubscriptionHandler subscriptionHandler, O... obj) {
         this.name = name;
         this.receiver = receiver;
-        subscriptionHandler.onSubscribe(name);
+        this.subscriptionHandler = subscriptionHandler;
         this.objClass = (Class<O>) obj.getClass().getComponentType();
     }
 
@@ -48,9 +50,17 @@ public class Channel<O> {
 
     /**
      *
+     * @return {@link SubscriptionHandler}
+     */
+    public SubscriptionHandler getSubscriptionHandler() {
+        return subscriptionHandler;
+    }
+
+    /**
+     *
      * @return {@link #receiver}
      */
-    private Class<O> getObjClass() {
+    public Class<O> getObjClass() {
         return objClass;
     }
 

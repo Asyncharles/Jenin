@@ -4,6 +4,8 @@ import com.google.gson.*;
 import net.charles.annotations.DataKey;
 import net.charles.annotations.Exclude;
 import net.charles.logger.LoggerProvider;
+import net.charles.messaging.ChannelManager;
+import redis.clients.jedis.Jedis;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -153,6 +155,15 @@ public abstract class JeninParser {
     }
 
     /**
+     * The {@link ChannelManager} instance
+     * @param jedis the {@link Jedis} resource instance
+     * @return {@link ChannelManager}
+     */
+    protected ChannelManager getChannelManager(Jedis jedis) {
+        return ChannelManager.getInstance(jedis, gson);
+    }
+
+    /**
      * The Jenin Parser logger
      * @return {@link LoggerProvider#getLogger(String)}
      */
@@ -288,6 +299,13 @@ public abstract class JeninParser {
      * @return a list of object
      */
     public abstract <V, C> List<C> hashSearch(SearchFilter<V>[] searchFilters, Class<C> clazz) throws NoSuchFieldException, IllegalAccessException;
+
+    /**
+     * Access the {@link ChannelManager} instance through {@link ChannelManager#getInstance(Jedis, Gson)}
+     * Each time the instance is accessed, the {@link Jedis} instance is reloaded from the pool, as well as updating the {@link Gson}
+     * @return {@link ChannelManager}
+     */
+    public abstract ChannelManager getChannelManagerInstance();
 
     /**
      * Configures the Parser's logger

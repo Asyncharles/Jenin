@@ -1,6 +1,7 @@
 package net.charles;
 
 import com.google.gson.ExclusionStrategy;
+import net.charles.messaging.ChannelManager;
 import net.charles.parser.JeninParser;
 import net.charles.parser.KeyManager;
 import net.charles.parser.SearchFilter;
@@ -116,6 +117,11 @@ public class Jenin extends JeninParser {
             }
             return objects;
         });
+    }
+
+    @Override
+    public ChannelManager getChannelManagerInstance() {
+        return getChannelManager(pool.getResource());
     }
 
     private <R> R jedisResource(Function<Jedis, R> function) {
