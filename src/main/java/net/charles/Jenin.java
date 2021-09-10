@@ -1,7 +1,6 @@
 package net.charles;
 
 import com.google.gson.ExclusionStrategy;
-import com.google.gson.GsonBuilder;
 import net.charles.parser.JeninParser;
 import net.charles.parser.KeyManager;
 import net.charles.parser.SearchFilter;
