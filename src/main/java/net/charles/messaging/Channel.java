@@ -16,7 +16,6 @@ public class Channel<O> {
      */
     private MessageReceiver<O> receiver;
 
-
     /**
      *
      * @param name {@link #name}

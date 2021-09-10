@@ -13,6 +13,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class Jenin extends JeninParser {
     private final JedisPool pool;
@@ -41,66 +42,66 @@ public class Jenin extends JeninParser {
 
     @Override
     public void push(String key, String json) {
-        try (Jedis jedis = pool.getResource()) {
-            jedis.set(key, json);
-        }
+        jedisResource(jedis -> jedis.set(key, json));
     }
 
     @Override
-    public <T> void push(T t) throws IllegalAccessException {
-        try (Jedis jedis = pool.getResource()) {
-            String key = KeyManager.findKey(t);
-            jedis.set(key, getGson().toJson(t, t.getClass()));
-        }
+    public <T> void push(T t) {
+        jedisResource(jedis -> {
+            try {
+                String key = KeyManager.findKey(t);
+                jedis.set(key, getGson().toJson(t, t.getClass()));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
     }
 
     @Override
-    public <T> void pushToHashSet(T t) throws IllegalAccessException {
-        try (Jedis jedis = pool.getResource()) {
-            String key = KeyManager.findKey(t);
-            jedis.hset(key, convertToHashSet(t));
-        }
+    public <T> void pushToHashSet(T t) {
+        jedisResource(jedis -> {
+            try {
+                String key = KeyManager.findKey(t);
+                jedis.hset(key, convertToHashSet(t));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
     }
 
     @Override
     public void pushToHashSet(String key, Map<String, String> obj) {
-        try (Jedis jedis = pool.getResource()) {
-            jedis.hset(key, obj);
-        }
+        jedisResource(jedis -> jedis.hset(key, obj));
     }
 
     @Override
     public <T> T search(String key, Class<T> clazz) {
-        try (Jedis jedis = pool.getResource()) {
-            return getGson().fromJson(jedis.get(key), clazz);
-        }
+        return jedisResource(jedis -> getGson().fromJson(jedis.get(key), clazz));
     }
 
     @Override
     public String search(String key, String fieldName, Class<?> clazz) {
-        try (Jedis jedis = pool.getResource()) {
+        return jedisResource(jedis -> {
             Object obj = getGson().fromJson(jedis.get(key), clazz);
             return getGson().toJsonTree(obj).getAsJsonObject().get(fieldName).getAsString();
-        }
+        });
     }
 
     @Override
     public <T> T hashSearch(String key, Class<T> clazz) {
-        try (Jedis jedis = pool.getResource()) {
-            return convertToObject(key, jedis.hgetAll(key), clazz);
-        }
+        return jedisResource(jedis -> convertToObject(key, jedis.hgetAll(key), clazz));
     }
 
     @Override
     public String hashSearch(String key, String fieldName) {
-        try (Jedis jedis = pool.getResource()) {
-            return jedis.hget(key, fieldName);
-        }
+        return jedisResource(jedis -> jedis.hget(key, fieldName));
     }
 
     @Override
-    public <V, C> List<C> hashSearch(SearchFilter<V>[] searchFilters, Class<C> clazz) throws NoSuchFieldException, IllegalAccessException {
-        try (Jedis jedis = pool.getResource()) {
+    public <V, C> List<C> hashSearch(SearchFilter<V>[] searchFilters, Class<C> clazz) {
+        return jedisResource(jedis -> {
             final List<C> objects = new ArrayList<>();
             for (String v : jedis.scan("0", new ScanParams().match("*")).getResult()) {
                 try {
@@ -108,9 +109,18 @@ public class Jenin extends JeninParser {
                         C c = convertToObject(v, jedis.hgetAll(v), clazz);
                         if (applyFilter(c, searchFilters)) objects.add(c);
                     }
-                } catch (JedisDataException ignored) { }
+                } catch (JedisDataException ignored) {
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
             return objects;
+        });
+    }
+
+    private <R> R jedisResource(Function<Jedis, R> function) {
+        try (Jedis jedis = pool.getResource()) {
+            return function.apply(jedis);
         }
     }
 }
