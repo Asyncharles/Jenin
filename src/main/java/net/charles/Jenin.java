@@ -25,6 +25,11 @@ public class Jenin extends JeninParser {
     }
 
     @Override
+    public void getTemporaryJedisInstance(Consumer<Jedis> callback) {
+        callback.andThen(pool::returnResource).accept(pool.getResource());
+    }
+
+    @Override
     public JeninParser updateExclusionStrategy(ExclusionStrategy serializationExclusionStrategy, ExclusionStrategy deserializationExclusionStrategy) {
         rebuildGson(getGson().newBuilder().serializeNulls().addSerializationExclusionStrategy(serializationExclusionStrategy).addDeserializationExclusionStrategy(deserializationExclusionStrategy));
         return this;

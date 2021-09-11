@@ -7,11 +7,13 @@ import net.charles.logger.LoggerProvider;
 import net.charles.messaging.ChannelManager;
 import redis.clients.jedis.Jedis;
 
+import javax.security.auth.callback.Callback;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.*;
 import java.util.logging.Formatter;
 
@@ -170,6 +172,12 @@ public abstract class JeninParser {
     public Logger getLogger() {
         return logger;
     }
+
+    /**
+     * Gives a temporary thread-safe {@link Jedis} instance from the main pool in {@link net.charles.Jenin}
+     * @param callback the callback to access the {@link Jedis} instance
+     */
+    public abstract void getTemporaryJedisInstance(Consumer<Jedis> callback);
 
     /**
      * Updates the {@link Gson} serialization and deserialization exclusion strategies
