@@ -14,14 +14,27 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class Jenin extends JeninParser {
+public class Jenin extends JeninParser implements JedisController {
     private final JedisPool pool;
+    private final ExecutorService executorService;
 
     public Jenin(final JedisPool jedisPool) {
+        this(jedisPool, JedisController.DEFAULT_EXECUTOR_SERVICE);
+    }
+
+    public Jenin(final JedisPool jedisPool, final int nThreads) {
+        this(jedisPool, Executors.newFixedThreadPool(nThreads));
+    }
+
+    public Jenin(final JedisPool jedisPool, final ExecutorService executorService) {
         this.pool = jedisPool;
+        this.executorService = executorService;
     }
 
     @Override
@@ -128,15 +141,41 @@ public class Jenin extends JeninParser {
         return getChannelManager();
     }
 
-    private <R> R getWithJedis(Function<Jedis, R> function) {
-        try (Jedis jedis = pool.getResource()) {
+    @Override
+    public <R> R getWithJedis(Function<Jedis, R> function) {
+        Jedis jedis = null;
+        try {
+            jedis = pool.getResource();
             return function.apply(jedis);
+        } finally {
+            assert jedis != null;
+            pool.returnResource(jedis);
         }
     }
 
-    private void withJedis(Consumer<Jedis> consumer) {
+    @Override
+    public <R> Future<R> getWithJedisAsync(Function<Jedis, R> function) {
+        return executorService.submit(() -> {
+            Jedis jedis = null;
+            try {
+                jedis = pool.getResource();
+                return function.apply(jedis);
+            } finally {
+                assert jedis != null;
+                pool.returnResource(jedis);
+            }
+        });
+    }
+
+    @Override
+    public void withJedis(Consumer<Jedis> consumer) {
         try (Jedis jedis = pool.getResource()) {
             consumer.andThen(pool::returnResource).accept(jedis);
         }
+    }
+
+    @Override
+    public void withJedisAsync(Consumer<Jedis> consumer) {
+        executorService.submit(() -> consumer.andThen(pool::returnResource).accept(pool.getResource()));
     }
 }
