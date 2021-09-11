@@ -11,6 +11,9 @@ public class Channel<O> {
      */
     private MessageReceiver<O> receiver;
 
+    /**
+     * The {@link SubscriptionHandler}
+     */
     private final SubscriptionHandler subscriptionHandler;
 
     /**
@@ -63,7 +66,6 @@ public class Channel<O> {
     public Class<O> getObjClass() {
         return objClass;
     }
-
 
     /**
      * Modifies the current receiver
