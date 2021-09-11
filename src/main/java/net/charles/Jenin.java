@@ -125,7 +125,7 @@ public class Jenin extends JeninParser {
 
     @Override
     public ChannelManager getChannelManagerInstance() {
-        return getChannelManager(pool.getResource());
+        return getChannelManager();
     }
 
     private <R> R getWithJedis(Function<Jedis, R> function) {

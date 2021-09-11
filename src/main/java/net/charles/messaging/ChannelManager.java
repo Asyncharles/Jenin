@@ -2,29 +2,25 @@ package net.charles.messaging;
 
 import com.google.gson.Gson;
 import net.charles.Jenin;
-import net.charles.exceptions.messaging.SubscriptionException;
 import net.charles.exceptions.messaging.UnregisteredChannelException;
-import redis.clients.jedis.Jedis;
+import net.charles.parser.JeninParser;
 import redis.clients.jedis.JedisPubSub;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 public final class ChannelManager {
     private static ChannelManager instance = null;
 
     private final LinkedHashMap<String, Channel<?>> registeredChannels;
-    private Jedis jedis;
+    private final JeninParser jenin;
     private Gson gson;
     private boolean isSubscribed;
 
-    private ChannelManager(Jedis jedis, Gson gson) {
+    private ChannelManager(JeninParser jenin, Gson gson) {
         this.registeredChannels = new LinkedHashMap<>();
-        this.jedis = jedis;
+        this.jenin = jenin;
         this.gson = gson;
         this.isSubscribed = false;
     }
@@ -54,13 +50,25 @@ public final class ChannelManager {
                         }
                     }
                 };
-                jedis.subscribe(jedisPubSub, registeredChannels.keySet().toArray(String[]::new));
+                jenin.getTemporaryJedisInstance(jedis -> jedis.subscribe(jedisPubSub, registeredChannels.keySet().toArray(String[]::new)));
             }).start();
         }
     }
 
-    public void reloadRedisMessagingWithOldChannels(Channel<?>... newChannels) {
-
+    public void unregisterChannels(String... channels) {
+        new Thread(() -> {
+            jenin.getTemporaryJedisInstance(jedis -> {
+                JedisPubSub jedisPubSub = new JedisPubSub() {
+                    @Override
+                    public void onUnsubscribe(String channel, int subscribedChannels) {
+                        registeredChannels.get(channel).getSubscriptionHandler().onUnSubscribe(channel);
+                    }
+                };
+                jedisPubSub.unsubscribe(channels);
+                jedis.subscribe(jedisPubSub, null);
+            });
+        }).start();
+        for (String name : channels) registeredChannels.remove(name);
     }
 
     public <O> void publish(Jenin jenin, String channel, O obj) {
@@ -77,11 +85,10 @@ public final class ChannelManager {
         return registeredChannels.values();
     }
 
-    public static ChannelManager getInstance(Jedis jedis, Gson gson) {
+    public static ChannelManager getInstance(JeninParser jenin, Gson gson) {
         if (instance == null) {
-            instance = new ChannelManager(jedis, gson);
+            instance = new ChannelManager(jenin, gson);
         }
-        instance.jedis = jedis;
         instance.gson = gson;
         return instance;
     }

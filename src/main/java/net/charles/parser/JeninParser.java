@@ -7,15 +7,16 @@ import net.charles.logger.LoggerProvider;
 import net.charles.messaging.ChannelManager;
 import redis.clients.jedis.Jedis;
 
-import javax.security.auth.callback.Callback;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.*;
-import java.util.logging.Formatter;
 
 public abstract class JeninParser {
     /**
@@ -158,11 +159,10 @@ public abstract class JeninParser {
 
     /**
      * The {@link ChannelManager} instance
-     * @param jedis the {@link Jedis} resource instance
      * @return {@link ChannelManager}
      */
-    protected ChannelManager getChannelManager(Jedis jedis) {
-        return ChannelManager.getInstance(jedis, gson);
+    protected ChannelManager getChannelManager() {
+        return ChannelManager.getInstance(this, gson);
     }
 
     /**
