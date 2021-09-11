@@ -84,4 +84,11 @@ public class Channel<O> {
     public void publish(Jenin jenin, O obj) {
         ChannelManager.getRawInstance().publish(jenin, name, obj);
     }
+
+    /**
+     * Destroys and unsubscribes the channel
+     */
+    public void destroy() {
+        ChannelManager.getRawInstance().unregisterChannels(name);
+    }
 }
