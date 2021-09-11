@@ -1,5 +1,7 @@
 package net.charles.messaging;
 
+import net.charles.Jenin;
+
 public class Channel<O> {
     /**
      * The redis channel's name
@@ -73,5 +75,13 @@ public class Channel<O> {
      */
     public void setReceiver(MessageReceiver<O> receiver) {
         this.receiver = receiver;
+    }
+
+    /**
+     * Publish an object in the channel
+     * @param obj the object
+     */
+    public void publish(Jenin jenin, O obj) {
+        ChannelManager.getRawInstance().publish(jenin, name, obj);
     }
 }
