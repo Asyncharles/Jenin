@@ -131,7 +131,7 @@ public class Jenin extends JeninParser {
 
     private void withJedis(Consumer<Jedis> consumer) {
         try (Jedis jedis = pool.getResource()) {
-            consumer.accept(jedis);
+            consumer.andThen(pool::returnResource).accept(jedis);
         }
     }
 }
