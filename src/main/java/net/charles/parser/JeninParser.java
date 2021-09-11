@@ -309,8 +309,9 @@ public abstract class JeninParser {
     public abstract <V, C> List<C> hashSearch(SearchFilter<V>[] searchFilters, Class<C> clazz) throws NoSuchFieldException, IllegalAccessException;
 
     /**
-     * Access the {@link ChannelManager} instance through {@link ChannelManager#getInstance(Jedis, Gson)}
-     * Each time the instance is accessed, the {@link Jedis} instance is reloaded from the pool, as well as updating the {@link Gson}
+     * Access the {@link ChannelManager} instance through {@link ChannelManager#getInstance(JeninParser, Gson)}
+     * Each time the instance is accessed, the {@link Gson}
+     * Since 2021-09-11 the {@link ChannelManager} uses the {@link #getTemporaryJedisInstance(Consumer)} to access a Jedis instance
      * @return {@link ChannelManager}
      */
     public abstract ChannelManager getChannelManagerInstance();
@@ -327,7 +328,7 @@ public abstract class JeninParser {
                     private static final String PATTERN = "[dd/MM/yyyy HH:mm:ss]";
                     @Override
                     public String format(final LogRecord record) {
-                        return String.format("%1$s %2$-10s %3$-10s %4$s\n",
+                        return String.format("%1$s %2$-10s %3$-6s %4$s\n",
                                 new SimpleDateFormat(PATTERN).format(new Date(record.getMillis())),
                                 "[" + record.getLoggerName() + "]",
                                 record.getLevel().getName(),
@@ -341,6 +342,6 @@ public abstract class JeninParser {
             logger.addHandler(consoleHandler);
             return logger;
         });
-        return Logger.getLogger("JeninParser");
+        return LoggerProvider.getLogger("JeninParser");
     }
 }

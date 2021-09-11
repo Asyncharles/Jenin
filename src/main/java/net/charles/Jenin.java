@@ -11,14 +11,13 @@ import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.exceptions.JedisDataException;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.logging.Level;
 
 public class Jenin extends JeninParser implements JedisController {
     private final JedisPool pool;
@@ -177,5 +176,17 @@ public class Jenin extends JeninParser implements JedisController {
     @Override
     public void withJedisAsync(Consumer<Jedis> consumer) {
         executorService.submit(() -> consumer.andThen(pool::returnResource).accept(pool.getResource()));
+    }
+
+    public void logResourcePoolInfo(long period) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getLogger().log(Level.INFO, "Current instances active : " + pool.getNumActive());
+                getLogger().log(Level.INFO, "Current instances waiting : " + pool.getNumWaiters());
+                getLogger().log(Level.INFO, "Current instances idling : " + pool.getNumIdle());
+            }
+        }, 1000, period);
     }
 }
