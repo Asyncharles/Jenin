@@ -1,14 +1,14 @@
 ## Jenin
 
-Redis object parser for Java
+Redis object mapper for Java
 
 Still under heavy development / no official release for now. The first release of this project is planned for the upcoming weeks. 
 
 Contact finalvoiddev@gmail.com for any requests/issues.
 
-## Jenin Parser
+## Jenin Mapper
 
-To see the different functions available, head to [Jenin Parser](https://github.com/FinalVoid/Jenin/blob/master/src/main/java/net/charles/parser/JeninParser.java)
+To see the different functions available, head to [Jenin Mapper](https://github.com/FinalVoid/Jenin/blob/master/src/main/java/net/charles/mapper/JeninMapper.java)
 You can build a Jenin object with the constructor
 
 ```java
