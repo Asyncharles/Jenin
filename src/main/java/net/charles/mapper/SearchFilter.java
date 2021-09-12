@@ -1,4 +1,4 @@
-package net.charles.parser;
+package net.charles.mapper;
 
 public class SearchFilter<V> {
     private final String fieldName;

@@ -1,4 +1,4 @@
-package net.charles.parser;
+package net.charles.mapper;
 
 import com.google.gson.*;
 import net.charles.annotations.DataKey;
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.*;
 
-public abstract class JeninParser {
+public abstract class JeninMapper {
     /**
      * <p>
      *     Default exclusion strategies used during serialization/deserialization of an object by {@link Gson}
@@ -56,8 +56,8 @@ public abstract class JeninParser {
     /**
      * Public constructor that will build the {@link Gson} with the {@link #DEFAULT_SERIALIZATION_EXCLUSION_STRATEGY} and {@link #DEFAULT_DESERIALIZATION_EXCLUSION_STRATEGY}
      */
-    public JeninParser() {
-        this(JeninParser.DEFAULT_SERIALIZATION_EXCLUSION_STRATEGY, DEFAULT_DESERIALIZATION_EXCLUSION_STRATEGY);
+    public JeninMapper() {
+        this(JeninMapper.DEFAULT_SERIALIZATION_EXCLUSION_STRATEGY, DEFAULT_DESERIALIZATION_EXCLUSION_STRATEGY);
     }
 
     /**
@@ -65,7 +65,7 @@ public abstract class JeninParser {
      * @param serializationStrategy {@link GsonBuilder#addSerializationExclusionStrategy(ExclusionStrategy)} the strategy used while serializing objects into redis
      * @param deserializationStrategy {@link GsonBuilder#addDeserializationExclusionStrategy(ExclusionStrategy)} the strategy used while deserializing objects from redis
      */
-    public JeninParser(ExclusionStrategy serializationStrategy, ExclusionStrategy deserializationStrategy) {
+    public JeninMapper(ExclusionStrategy serializationStrategy, ExclusionStrategy deserializationStrategy) {
         gson = new GsonBuilder().serializeNulls().addSerializationExclusionStrategy(serializationStrategy).addDeserializationExclusionStrategy(deserializationStrategy).create();
     }
 
@@ -183,24 +183,24 @@ public abstract class JeninParser {
      * Updates the {@link Gson} serialization and deserialization exclusion strategies
      * @param serializationExclusionStrategy {@link ExclusionStrategy} the serialization exclusion strategy
      * @param deserializationExclusionStrategy {@link ExclusionStrategy} the deserialization exclusion strategy
-     * @return {@link JeninParser}
+     * @return {@link JeninMapper}
      */
-    public abstract JeninParser updateExclusionStrategy(ExclusionStrategy serializationExclusionStrategy, ExclusionStrategy deserializationExclusionStrategy);
+    public abstract JeninMapper updateExclusionStrategy(ExclusionStrategy serializationExclusionStrategy, ExclusionStrategy deserializationExclusionStrategy);
 
     /**
      * Updates the {@link Gson} global serialization and deserialization exclusion strategies
      * @param exclusionStrategy {@link ExclusionStrategy} the strategies
-     * @return {@link JeninParser}
+     * @return {@link JeninMapper}
      */
-    public abstract JeninParser updateExclusionStrategy(ExclusionStrategy... exclusionStrategy);
+    public abstract JeninMapper updateExclusionStrategy(ExclusionStrategy... exclusionStrategy);
 
     /**
      * Updates the {@link Gson} with new type adapters
      * @param type object type
      * @param adapter the object adapter
-     * @return {@link JeninParser}
+     * @return {@link JeninMapper}
      */
-    public abstract JeninParser registerTypeAdapter(Type type, Object adapter);
+    public abstract JeninMapper registerTypeAdapter(Type type, Object adapter);
 
     /**
      * Pushes the json string as a redis string
@@ -309,7 +309,7 @@ public abstract class JeninParser {
     public abstract <V, C> List<C> hashSearch(SearchFilter<V>[] searchFilters, Class<C> clazz) throws NoSuchFieldException, IllegalAccessException;
 
     /**
-     * Access the {@link ChannelManager} instance through {@link ChannelManager#getInstance(JeninParser, Gson)}
+     * Access the {@link ChannelManager} instance through {@link ChannelManager#getInstance(JeninMapper, Gson)}
      * Each time the instance is accessed, the {@link Gson}
      * Since 2021-09-11 the {@link ChannelManager} uses the {@link #getTemporaryJedisInstance(Consumer)} to access a Jedis instance
      * @return {@link ChannelManager}

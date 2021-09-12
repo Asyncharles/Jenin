@@ -1,4 +1,4 @@
-package net.charles.parser;
+package net.charles.mapper;
 
 import net.charles.annotations.DataKey;
 import net.charles.exceptions.parser.DataKeyNotFoundException;

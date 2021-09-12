@@ -3,7 +3,7 @@ package net.charles.messaging;
 import com.google.gson.Gson;
 import net.charles.Jenin;
 import net.charles.exceptions.messaging.UnregisteredChannelException;
-import net.charles.parser.JeninParser;
+import net.charles.mapper.JeninMapper;
 import redis.clients.jedis.JedisPubSub;
 
 import java.lang.reflect.Type;
@@ -14,11 +14,11 @@ public final class ChannelManager {
     private static ChannelManager instance = null;
 
     private final LinkedHashMap<String, Channel<?>> registeredChannels;
-    private final JeninParser jenin;
+    private final JeninMapper jenin;
     private Gson gson;
     private boolean isSubscribed;
 
-    private ChannelManager(JeninParser jenin, Gson gson) {
+    private ChannelManager(JeninMapper jenin, Gson gson) {
         this.registeredChannels = new LinkedHashMap<>();
         this.jenin = jenin;
         this.gson = gson;
@@ -85,7 +85,7 @@ public final class ChannelManager {
         return registeredChannels.values();
     }
 
-    public static ChannelManager getInstance(JeninParser jenin, Gson gson) {
+    public static ChannelManager getInstance(JeninMapper jenin, Gson gson) {
         if (instance == null) {
             instance = new ChannelManager(jenin, gson);
         }

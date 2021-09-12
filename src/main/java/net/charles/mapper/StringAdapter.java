@@ -1,4 +1,4 @@
-package net.charles.parser;
+package net.charles.mapper;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

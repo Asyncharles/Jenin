@@ -2,9 +2,9 @@ package net.charles;
 
 import com.google.gson.ExclusionStrategy;
 import net.charles.messaging.ChannelManager;
-import net.charles.parser.JeninParser;
-import net.charles.parser.KeyManager;
-import net.charles.parser.SearchFilter;
+import net.charles.mapper.JeninMapper;
+import net.charles.mapper.KeyManager;
+import net.charles.mapper.SearchFilter;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.ScanParams;
@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 
-public class Jenin extends JeninParser implements JedisController {
+public class Jenin extends JeninMapper implements JedisController {
     private final JedisPool pool;
     private final ExecutorService executorService;
 
@@ -42,19 +42,19 @@ public class Jenin extends JeninParser implements JedisController {
     }
 
     @Override
-    public JeninParser updateExclusionStrategy(ExclusionStrategy serializationExclusionStrategy, ExclusionStrategy deserializationExclusionStrategy) {
+    public JeninMapper updateExclusionStrategy(ExclusionStrategy serializationExclusionStrategy, ExclusionStrategy deserializationExclusionStrategy) {
         rebuildGson(getGson().newBuilder().serializeNulls().addSerializationExclusionStrategy(serializationExclusionStrategy).addDeserializationExclusionStrategy(deserializationExclusionStrategy));
         return this;
     }
 
     @Override
-    public JeninParser updateExclusionStrategy(ExclusionStrategy... exclusionStrategy) {
+    public JeninMapper updateExclusionStrategy(ExclusionStrategy... exclusionStrategy) {
         rebuildGson(getGson().newBuilder().serializeNulls().setExclusionStrategies(exclusionStrategy));
         return this;
     }
 
     @Override
-    public JeninParser registerTypeAdapter(Type type, Object adapter) {
+    public JeninMapper registerTypeAdapter(Type type, Object adapter) {
         rebuildGson(getGson().newBuilder().registerTypeAdapter(type, adapter));
         return this;
     }
