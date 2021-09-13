@@ -99,6 +99,11 @@ public class Jenin extends JeninMapper implements JedisController {
     }
 
     @Override
+    public <T> List<T> searchDuplicable(String key, Class<T> clazz) {
+        return null;
+    }
+
+    @Override
     public String search(String key, String fieldName, Class<?> clazz) {
         return getWithJedis(jedis -> {
             Object obj = getGson().fromJson(jedis.get(key), clazz);
@@ -107,13 +112,28 @@ public class Jenin extends JeninMapper implements JedisController {
     }
 
     @Override
+    public List<String> searchDuplicable(String key, String fieldName, Class<?> clazz) {
+        return null;
+    }
+
+    @Override
     public <T> T hashSearch(String key, Class<T> clazz) {
         return getWithJedis(jedis -> convertToObject(key, jedis.hgetAll(key), clazz));
     }
 
     @Override
+    public <T> List<T> duplicableHashSearch(String key, Class<T> clazz) {
+        return null;
+    }
+
+    @Override
     public String hashSearch(String key, String fieldName) {
         return getWithJedis(jedis -> jedis.hget(key, fieldName));
+    }
+
+    @Override
+    public List<String> duplicableHashSearch(String key, String fieldName) {
+        return null;
     }
 
     @Override
@@ -164,6 +184,18 @@ public class Jenin extends JeninMapper implements JedisController {
                 pool.returnResource(jedis);
             }
         });
+    }
+
+    @Override
+    public <R> List<R> getDuplicableWithJedis(Function<Jedis, List<R>> function) {
+        Jedis jedis = null;
+        try {
+            jedis = pool.getResource();
+            return function.apply(jedis);
+        } finally {
+            assert jedis != null;
+            pool.returnResource(jedis);
+        }
     }
 
     @Override

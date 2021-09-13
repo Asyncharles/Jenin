@@ -253,6 +253,21 @@ public abstract class JeninMapper {
      *     Does not look up hash set, only redis strings
      *     ==============================================
      *
+     *     Searches a duplicable {@link net.charles.annotations.Duplicable} redis string and converts it into an object
+     * </p>
+     * @param key the key to access the redis string
+     * @param clazz the object class
+     * @param <T> the object type
+     * @return a list of the duplicable object
+     */
+    public abstract <T> List<T> searchDuplicable(String key, Class<T> clazz);
+
+    /**
+     * <p>
+     *     ==============================================
+     *     Does not look up hash set, only redis strings
+     *     ==============================================
+     *
      *     Searches a redis string and returns the value of the field
      * </p>
      * @param key the key to access the redis string
@@ -261,6 +276,21 @@ public abstract class JeninMapper {
      * @return the value formatted into a string
      */
     public abstract String search(String key, String fieldName, Class<?> clazz);
+
+    /**
+     * <p>
+     *     ==============================================
+     *     Does not look up hash set, only redis strings
+     *     ==============================================
+     *
+     *     Searches a duplicable {@link net.charles.annotations.Duplicable} redis string and returns the value of the field
+     * </p>
+     * @param key the key to access the redis string
+     * @param fieldName the json field name to access the value
+     * @param clazz the class of the object
+     * @return a list of value formatted into a string
+     */
+    public abstract List<String> searchDuplicable(String key, String fieldName, Class<?> clazz);
 
     /**
      * <p>
@@ -283,6 +313,21 @@ public abstract class JeninMapper {
      *     Does not look up redis strings, only hash sets
      *     ==============================================
      *
+     *     Searches a duplicable {@link net.charles.annotations.Duplicable} hash set and converts it into an object
+     * </p>
+     *
+     * @param key the key to access the hash set
+     * @param <T> the object type
+     * @return a list of the duplicable object
+     */
+    public abstract <T> List<T> duplicableHashSearch(String key, Class<T> clazz);
+
+    /**
+     * <p>
+     *     ==============================================
+     *     Does not look up redis strings, only hash sets
+     *     ==============================================
+     *
      *     Searches a hash set and converts it into an object
      * </p>
      *
@@ -291,6 +336,21 @@ public abstract class JeninMapper {
      * @return the field value
      */
     public abstract String hashSearch(String key, String fieldName);
+
+    /**
+     * <p>
+     *     ==============================================
+     *     Does not look up redis strings, only hash sets
+     *     ==============================================
+     *
+     *     Searches duplicable {@link net.charles.annotations.Duplicable} a hash set and converts it into an object
+     * </p>
+     *
+     * @param key the key to access the hash set
+     * @param fieldName the name of the field that contains the value
+     * @return a list field values
+     */
+    public abstract List<String> duplicableHashSearch(String key, String fieldName);
 
     /**
      * <p>

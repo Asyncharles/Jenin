@@ -1,9 +1,11 @@
 package net.charles.mapper;
 
 import net.charles.annotations.DataKey;
+import net.charles.annotations.Duplicable;
 import net.charles.exceptions.parser.DataKeyNotFoundException;
 
 import java.lang.reflect.Field;
+import java.util.UUID;
 
 public final class KeyManager {
     /**
@@ -33,10 +35,11 @@ public final class KeyManager {
         if (!hasDataKey(t.getClass())) {
             throw new DataKeyNotFoundException("no data key were found");
         }
+        final boolean duplicable = t.getClass().getAnnotation(Duplicable.class) != null;
         for (Field field : t.getClass().getDeclaredFields()) {
             if (field.getAnnotation(DataKey.class) != null) {
                 field.setAccessible(true);
-                return String.valueOf(field.get(t));
+                return (duplicable ? UUID.randomUUID() + "=" + field.get(t) : String.valueOf(field.get(t)));
             }
         }
         return null;
