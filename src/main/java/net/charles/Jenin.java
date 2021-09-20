@@ -101,7 +101,7 @@ public class Jenin extends JeninMapper implements JedisController {
 
     @Override
     public <T> List<T> searchDuplicable(String key, Class<T> clazz) {
-        return getDuplicableWithJedis(jedis -> jedis.scan("0", new ScanParams().match("*:" + key)).getResult().stream().map(s -> getGson().fromJson(s, clazz)).collect(Collectors.toList()));
+        return getDuplicableWithJedis(jedis -> jedis.scan("0", new ScanParams().match("*=" + key)).getResult().stream().map(s -> getGson().fromJson(jedis.get(s), clazz)).collect(Collectors.toList()));
     }
 
     @Override
@@ -114,7 +114,7 @@ public class Jenin extends JeninMapper implements JedisController {
 
     @Override
     public List<String> searchDuplicable(String key, String fieldName, Class<?> clazz) {
-        return getDuplicableWithJedis(jedis -> jedis.scan("0", new ScanParams().match("*:" + key)).getResult().stream().map(s -> getGson().toJsonTree(getGson().fromJson(s, clazz)).getAsJsonObject().get(fieldName).getAsString()).collect(Collectors.toList()));
+        return getDuplicableWithJedis(jedis -> jedis.scan("0", new ScanParams().match("*:" + key)).getResult().stream().map(s -> getGson().toJsonTree(getGson().fromJson(jedis.get(s), clazz)).getAsJsonObject().get(fieldName).getAsString()).collect(Collectors.toList()));
     }
 
     @Override
