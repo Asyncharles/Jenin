@@ -402,6 +402,6 @@ public abstract class JeninMapper {
             logger.addHandler(consoleHandler);
             return logger;
         });
-        return LoggerProvider.getLogger("JeninParser");
+        return LoggerProvider.getLogger("JeninMapper");
     }
 }
