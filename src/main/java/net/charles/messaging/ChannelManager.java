@@ -50,7 +50,7 @@ public final class ChannelManager {
                         }
                     }
                 };
-                jenin.getTemporaryJedisInstance(jedis -> jedis.subscribe(jedisPubSub, registeredChannels.keySet().toArray(String[]::new)));
+                jenin.getTemporaryJedisInstance(jedis -> jedis.subscribe(jedisPubSub, registeredChannels.keySet().toArray(new String[]{})));
             }).start();
         }
     }
