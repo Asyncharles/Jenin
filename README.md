@@ -15,3 +15,7 @@ You can build a Jenin object with the constructor
 Jenin jenin = new Jenin(new JedisPool(jedisPoolConfig, "host", 6969, 1000, "pwd"));
 ```
 Head to the [examples](https://github.com/FinalVoid/Jenin/tree/master/src/test/java) for further detailing. 
+
+## The future
+
+I am currently working on implementing a [byte mapper](https://github.com/Asyncharles/Jenin/tree/object_stream), and tools to facilitate geospatial indexing.
