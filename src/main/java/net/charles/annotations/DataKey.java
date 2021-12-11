@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface DataKey {
     /**
-     *
+     * It is recommended to include the {@link DataKey} for the {@link net.charles.mapper.JeninMapper.MapperType#BYTE} mapper
      * @return {@code true} if you wish for the field to be included in the serialized object, {@code false} otherwise
      */
     boolean include() default true;

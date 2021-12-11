@@ -7,6 +7,7 @@ import net.charles.logger.LoggerProvider;
 import net.charles.messaging.ChannelManager;
 import redis.clients.jedis.Jedis;
 
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -51,6 +52,7 @@ public abstract class JeninMapper {
         }
     };
     private final Logger logger = initLogger();
+    private final ByteArrayOutputStream outputStream;
     private Gson gson;
 
     /**
@@ -67,6 +69,7 @@ public abstract class JeninMapper {
      */
     public JeninMapper(ExclusionStrategy serializationStrategy, ExclusionStrategy deserializationStrategy) {
         gson = new GsonBuilder().serializeNulls().addSerializationExclusionStrategy(serializationStrategy).addDeserializationExclusionStrategy(deserializationStrategy).create();
+        outputStream = new ByteArrayOutputStream();
     }
 
     /**
@@ -75,6 +78,34 @@ public abstract class JeninMapper {
      */
     protected void rebuildGson(GsonBuilder builder) {
         this.gson = builder.create();
+    }
+
+    /**
+     * Encodes the T object into an array of bytes
+     * @param obj the object instance
+     * @param <T> the object type
+     * @return the encoded object
+     * @throws IOException
+     */
+    protected <T> byte[] encodeObject(T obj) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+        objectOutputStream.writeObject(obj);
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    /**
+     * Decodes the object from array of bytes
+     * @param bytes the encoded object
+     * @param <T> the object type
+     * @return the decoded object
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    protected <T> T decodeObject(byte[] bytes) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+        return (T) objectInputStream.readObject();
     }
 
     /**
@@ -403,5 +434,10 @@ public abstract class JeninMapper {
             return logger;
         });
         return LoggerProvider.getLogger("JeninMapper");
+    }
+
+    public enum MapperType {
+        JSON,
+        BYTE
     }
 }

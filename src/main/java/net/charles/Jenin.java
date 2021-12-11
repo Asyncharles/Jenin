@@ -22,18 +22,24 @@ import java.util.stream.Collectors;
 
 public class Jenin extends JeninMapper implements JedisController {
     private final JedisPool pool;
+    private final JeninMapper.MapperType mapperType;
     private final ExecutorService executorService;
 
     public Jenin(final JedisPool jedisPool) {
-        this(jedisPool, JedisController.DEFAULT_EXECUTOR_SERVICE);
+        this(jedisPool, JeninMapper.MapperType.JSON, JedisController.DEFAULT_EXECUTOR_SERVICE);
+    }
+
+    public Jenin(final JedisPool jedisPool, final JeninMapper.MapperType storageType) {
+        this(jedisPool, storageType, JedisController.DEFAULT_EXECUTOR_SERVICE);
     }
 
     public Jenin(final JedisPool jedisPool, final int nThreads) {
-        this(jedisPool, Executors.newFixedThreadPool(nThreads));
+        this(jedisPool, JeninMapper.MapperType.JSON, Executors.newFixedThreadPool(nThreads));
     }
 
-    public Jenin(final JedisPool jedisPool, final ExecutorService executorService) {
+    public Jenin(final JedisPool jedisPool, final JeninMapper.MapperType mapperType, final ExecutorService executorService) {
         this.pool = jedisPool;
+        this.mapperType = mapperType;
         this.executorService = executorService;
     }
 

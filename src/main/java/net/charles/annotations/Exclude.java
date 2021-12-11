@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 /**
  * <p>
  *     The {@link Exclude} annotation defines whether the field or the class will be included in the stored data
+ *     The {@link Exclude} annotation does not work yet with {@link net.charles.mapper.JeninMapper.MapperType#BYTE} mapper, please wait for a further version
  * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
