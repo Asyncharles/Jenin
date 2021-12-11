@@ -15,3 +15,8 @@ You can build a Jenin object with the constructor
 Jenin jenin = new Jenin(new JedisPool(jedisPoolConfig, "host", 6969, 1000, "pwd"));
 ```
 Head to the [examples](https://github.com/FinalVoid/Jenin/tree/master/src/test/java) for further detailing. 
+
+## Mapping objects using bytes
+
+I would not recommend using the byte mapper yet as it is still under heavy development and does not support most of the serialization/deserialization features.
+Byte mapper available [here](https://github.com/Asyncharles/Jenin/blob/object_stream/src/main/java/net/charles/mapper/JeninMapper.java) 
