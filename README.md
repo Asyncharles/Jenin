@@ -4,7 +4,7 @@ Redis object mapper for Java
 
 Still under heavy development / no official release for now. The first release of this project is planned for the upcoming weeks. 
 
-Contact finalvoiddev@gmail.com for any requests/issues.
+Contact contact@charlestrl.dev for any requests/issues.
 
 ## Jenin Mapper
 
